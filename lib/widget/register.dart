@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:kidproduct/utility/my_constant.dart';
 import 'package:kidproduct/utility/my_style.dart';
 
@@ -10,6 +13,8 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   int indexTheme = 0;
   String choosePosition;
+  File file;
+  String urlAvatar, name, user, password, rePassword;
 
   @override
   Widget build(BuildContext context) {
@@ -17,12 +22,7 @@ class _RegisterState extends State<Register> {
       appBar: AppBar(
         title: Text('Register'),
         backgroundColor: MyStyle().primaryColors[indexTheme],
-        actions: [
-          IconButton(
-            icon: Icon(Icons.cloud_upload),
-            onPressed: () {},
-          )
-        ],
+        actions: [buildIconButton()],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -36,6 +36,16 @@ class _RegisterState extends State<Register> {
           ],
         ),
       ),
+    );
+  }
+
+  IconButton buildIconButton() {
+    return IconButton(
+      icon: Icon(Icons.cloud_upload),
+      onPressed: () {
+        print(
+            'name = $name, user = $user, password = $password, re-password = $rePassword');
+      },
     );
   }
 
@@ -77,16 +87,22 @@ class _RegisterState extends State<Register> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
-            icon: Icon(
-              Icons.add_a_photo,
-              size: 36,
-            ),
-            onPressed: null),
+          icon: Icon(
+            Icons.add_a_photo,
+            size: 36,
+          ),
+          onPressed: () => chooseAvatar(ImageSource.camera),
+        ),
         Container(
           width: 180,
+          height: 180,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Image.asset('images/avatar.png'),
+            child: file == null
+                ? Image.asset('images/avatar.png')
+                : CircleAvatar(
+                    backgroundImage: FileImage(file),
+                  ),
           ),
         ),
         IconButton(
@@ -94,7 +110,7 @@ class _RegisterState extends State<Register> {
               Icons.add_photo_alternate,
               size: 36,
             ),
-            onPressed: null),
+            onPressed: () => chooseAvatar(ImageSource.gallery)),
       ],
     );
   }
@@ -103,6 +119,7 @@ class _RegisterState extends State<Register> {
         margin: EdgeInsets.only(bottom: 16),
         width: 250,
         child: TextField(
+          onChanged: (value) => name = value.trim(),
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.face),
             border: OutlineInputBorder(),
@@ -115,6 +132,7 @@ class _RegisterState extends State<Register> {
         margin: EdgeInsets.only(bottom: 16),
         width: 250,
         child: TextField(
+          onChanged: (value) => user = value.trim(),
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.account_box),
             border: OutlineInputBorder(),
@@ -127,6 +145,8 @@ class _RegisterState extends State<Register> {
         margin: EdgeInsets.only(bottom: 16),
         width: 250,
         child: TextField(
+          onChanged: (value) => password = value.trim(),
+          obscureText: true,
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.lock),
             border: OutlineInputBorder(),
@@ -139,6 +159,8 @@ class _RegisterState extends State<Register> {
         margin: EdgeInsets.only(bottom: 16),
         width: 250,
         child: TextField(
+          onChanged: (value) => rePassword = value.trim(),
+          obscureText: true,
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.lock_open),
             border: OutlineInputBorder(),
@@ -146,4 +168,20 @@ class _RegisterState extends State<Register> {
           ),
         ),
       );
+
+  Future<Null> chooseAvatar(ImageSource source) async {
+    try {
+      var result = await ImagePicker().getImage(
+        source: source,
+        maxWidth: 800,
+        maxHeight: 800,
+      );
+      //print('path ==> ${result.path}');
+      setState(() {
+        file = File(result.path);
+      });
+    } catch (e) {
+      print('e chossAvatar ==> ${e.toString()}');
+    }
+  }
 }
