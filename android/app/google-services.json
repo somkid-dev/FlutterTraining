@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "903578518208",
+    "firebase_url": "https://fluttertraining-35a35.firebaseio.com",
+    "project_id": "fluttertraining-35a35",
+    "storage_bucket": "fluttertraining-35a35.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:903578518208:android:0ae7786e6f7a129c4ce325",
+        "android_client_info": {
+          "package_name": "com.kdevs.kidproduct"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "903578518208-d1qakkudlbeh835sghcu6101e7j29lm2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXEzQbACsvZGNICxcT7mBWQ0ONGt065M4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "903578518208-d1qakkudlbeh835sghcu6101e7j29lm2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,9 +1,12 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kidproduct/utility/my_constant.dart';
 import 'package:kidproduct/utility/my_style.dart';
+import 'package:kidproduct/utility/normal_dialog.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -43,14 +46,32 @@ class _RegisterState extends State<Register> {
     return IconButton(
       icon: Icon(Icons.cloud_upload),
       onPressed: () {
-        print(
-            'name = $name, user = $user, password = $password, re-password = $rePassword');
+        if (file == null) {
+          normalDialog(context, 'Please Choose Avartar');
+        } else if (name == null ||
+            name.isEmpty ||
+            user == null ||
+            user.isEmpty ||
+            password == null ||
+            password.isEmpty ||
+            rePassword == null ||
+            rePassword.isEmpty) {
+          normalDialog(context, 'Have Space Place Fill Every Blank');
+        } else if (password != rePassword) {
+          normalDialog(context, 'password not correct');
+        } else if (choosePosition == null) {
+          normalDialog(context, 'กรุณาระบุตำแหน่งก่อน');
+        } else {
+          print(
+              'name = $name, user = $user, password = $password, re-password = $rePassword');
+          authenToFirebase();
+        }
       },
     );
   }
 
   Container buildContainerPosition() => Container(
-        width: 250,
+        width: 280,
         child: Container(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -183,5 +204,27 @@ class _RegisterState extends State<Register> {
     } catch (e) {
       print('e chossAvatar ==> ${e.toString()}');
     }
+  }
+
+  Future<Null> authenToFirebase() async {
+    await Firebase.initializeApp().then(
+      (value) async {
+        print('Initial Success');
+        await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(email: user, password: password)
+            .then((value) {
+          String uid = value.user.uid;
+          uploadAvatarToFirebase(uid);
+        }).catchError((value) {
+          String error = value.message;
+          normalDialog(context, error);
+        });
+      },
+    );
+  }
+
+  Future uploadAvatarToFirebase(String uid) async {
+    print('uid ==> $uid');
+    
   }
 }
